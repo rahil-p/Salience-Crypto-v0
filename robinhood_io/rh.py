@@ -9,6 +9,8 @@ from robinhood_io import endpoints, exceptions
 from robinhood_io.pairs import PAIRS
 import config
 
+from pprint import pprint
+
 class Robinhood:
 
     def __init__(self):
@@ -48,8 +50,7 @@ class Robinhood:
             res = self.api_session.post(endpoints.api_login(), data=payload, timeout=15)
             res.raise_for_status()
             data = res.json()
-        except requests.exceptions.HTTPError as err_msg:
-            warnings.warn('Failed to log in: ' + repr(err_msg))
+        except requests.exceptions.HTTPError:
             raise exceptions.LoginFailed()
 
         if 'token' in data.keys():
@@ -58,12 +59,27 @@ class Robinhood:
 
         return
 
+    #migrate token via oauth2/migrate endpoint
+    def migrate_token(self):
+        try:
+            res = self.api_session.post(endpoints.api_migrate_token(), timeout=15)
+            res.raise_for_status()
+            data = res.json()
+        except requests.exceptions.HTTPError:
+            raise exceptions.LoginFailed()
+
+        print(data)
+
+        return
+
+    #set oauth2_token
+
+
     def logout(self):
         try:
             req = self.api_session.post(endpoints.api_logout(), timeout=15)
             req.raise_for_status()
-        except requests.exceptions.HTTPError as err_msg:
-            warnings.warn('Failed to log out: ' + repr(err_msg))
+        except requests.exceptions.HTTPError:
             raise exceptions.LogoutFailed()
 
         self.headers['Authorization'] = None
@@ -100,8 +116,7 @@ class Robinhood:
             res = self.nummus_session.post(endpoints.nummus_orders(), timeout=15)
             res.raise_for_status()
             data = res.json()
-        except requests.exceptions.HTTPError as err_msg:
-            warnings.warn('Failed to complete transaction: ' + repr(err_msg))
+        except requests.exceptions.HTTPError:
             return False
 
         return data
