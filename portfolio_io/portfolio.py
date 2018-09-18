@@ -185,7 +185,8 @@ class Portfolio:
 #             -exit positions when some inner threshold is met
 #                 -increase threshold by x every n minutes (to force quicker position)
 
-
 # Manager object:       ~created for any new trade (None if inactive); killed when positions are closed
 #     -self.status: {short: ..., long: ...}
 #     -
+
+# consider potential profit & risk, i.e. spread & pair risk data
