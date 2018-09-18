@@ -1,41 +1,50 @@
 import time
+import warnings
+warnings.simplefilter(action='ignore', category=FutureWarning)
 
 from robinhood_io.rh import Robinhood
 from portfolio_io.portfolio import Portfolio
+from pair_io.pair import Pair
 from crypto_io.crypto import Crypto
 
-def main1():
 
-    rh = Robinhood()
-    rh.login()
-    rh.migrate_token()
+import matplotlib.pyplot as plt
+import seaborn as sns
+import numpy as np
+import pandas as pd
 
-    power = rh.get_power()
-    print('Available buying power: ' + power)
+def main():
 
-    s = rh.order_crypto('BTC', 'market', 'buy', '.08', 1)
-    print(s)
+    start = time.time()
 
-    rh.logout()
+    # ensure sufficient cap given pricing of argued
+    s = Portfolio(250, ['XBT', 'ETH', 'ETC', 'XMR', 'REP', 'LTC'])
 
-def main2():
+    if s.link is not None:
+        print(s.link)
 
-    s = Portfolio(12, ['ETC', 'BTC'])
 
-    print(s.cap)
-    print('-----')
+    print(s.pairs_df.iloc[:, :9])
+    print(s.pairs_df.iloc[:, 9:])
 
-    for crypto in s.cryptos:
-        print(crypto.symbol)
-        print(crypto.name)
-        print(crypto.data)
-        print('-')
+    end = time.time()
 
-    time.sleep(120)
+    for pair in s.pair_options:
+        sns.set_style('darkgrid')
+        plt.plot(pair.spread)
+        plt.title('-'.join(pair.symbols_pair))
+        plt.xticks(np.arange(0, len(pair.spread) + 60, 60))
+        plt.axhline(0, color='grey')
+        plt.show()
 
-    for crypto in s.cryptos:
-        crypto.update_data()
-        print(crypto.data)
+    # time.sleep(120)
+    #
+    # s.update_cryptos()
+    # for crypto in s.cryptos:
+    #     print(crypto.data)
+
+
+    print(end - start)
 
 if __name__ == '__main__':
-    main2()
+    main()

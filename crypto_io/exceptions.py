@@ -3,3 +3,6 @@ class CryptoException(Exception):
 
 class ScrapeFailed(CryptoException):
     pass
+
+class CointegrationException(CryptoException):
+    pass
