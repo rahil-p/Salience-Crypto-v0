@@ -11,6 +11,7 @@ class Pair:
     def __init__(self, pair):
         self.cryptos_pair = tuple(pair)
         self.symbols_pair = tuple([crypto.symbol for crypto in self.cryptos_pair])
+        self.name = '-'.join(self.symbols_pair)
         self.pair_type = self.get_pair_type()
 
         self.integration_orders_pair = self.get_integration_orders()
@@ -118,7 +119,7 @@ class Pair:
 
     # -----
 
-    def get_spread(self, time_window=240):
+    def get_spread(self, time_window=360):
 
         if time_window == None:
             tmp0 = StandardScaler().fit_transform(self.cryptos_pair[0].data['std_close'].values)

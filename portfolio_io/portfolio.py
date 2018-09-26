@@ -20,8 +20,8 @@ class Portfolio:
         self.cap = cap
         self.cryptos = [Crypto(x) for x in crypto_symbols]
 
-        plotly.tools.set_credentials_file(username='sentience', api_key=config.plotly_api_key)
-        self.link = self.plot_cryptos()
+        plotly.tools.set_credentials_file(username='salience', api_key=config.plotly_api_key)
+        self.link = self.plot_cryptos(switch=1)
 
         self.url0 = 'https://api.coinmarketcap.com/v2/global/'
         self.total_market_cap, self.total_volume_24h = self.get_global_data()
@@ -34,8 +34,10 @@ class Portfolio:
         self.pairs_df = self.get_pairs_df()
 
         self.manager = None
+        self.top_trade = self.select_trade()
 
     def get_global_data(self):
+
         try:
             res = requests.get(self.url0, timeout=10)
             res.raise_for_status()
@@ -64,7 +66,7 @@ class Portfolio:
                                      line=dict(color=crypto.color),
                                      opacity=.8))
 
-        layout = go.Layout(title='Sentience Crypto - Portfolio',
+        layout = go.Layout(title='Salience Crypto - Portfolio',
                            xaxis=dict(title='time'),
                            yaxis=dict(title='USD ($)'))
 
@@ -162,6 +164,18 @@ class Portfolio:
         [pair.add_summary_df_row(summary) for pair in self.pair_options]
 
         return summary
+
+    # -----
+
+    def select_trade(self):
+
+        # ad hoc (poor) functionality
+        for pair in self.pair_options:
+            if pair.spread[-1] > 1:
+                print(pair.name)
+
+        inner = [-.05, .05]
+        outer = [-1, 1]
 
 
 
